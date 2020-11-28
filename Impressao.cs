@@ -11,41 +11,43 @@ namespace NSImpressaoPDF
 {
     public class Impressao
     {
-        public static void Imprimir(string p_pathFilePdf)
+        public static void Imprimir(string caminhoPDF, string nomeImpressora)
         {
-
             try
             {
-
-                FileInfo file = new FileInfo(p_pathFilePdf);
+                FileInfo file = new FileInfo(caminhoPDF);
 
                 if (file.Exists)
                 {
-
-                    Process process = new Process();
                     Process objP = new Process();
 
-                    objP.StartInfo.FileName = p_pathFilePdf;
-
+                    objP.StartInfo.FileName = caminhoPDF;
                     objP.StartInfo.WindowStyle = ProcessWindowStyle.Hidden; //Hide the window.
-                    objP.StartInfo.Verb = "print";
-                    objP.StartInfo.CreateNoWindow = true;
+                    objP.StartInfo.CreateNoWindow = false;
+
+                    if (!String.IsNullOrEmpty(nomeImpressora))
+                    {
+                        objP.StartInfo.Verb = "printto";
+                        objP.StartInfo.Arguments = "\"" + nomeImpressora + "\"";
+                    }
+                    else
+                        objP.StartInfo.Verb = "print";
+                    
+                    
                     objP.Start();
 
                     objP.CloseMainWindow();
                 }
                 else
-                {
-                    MessageBox.Show("Arquivo não existe.", "Erro");
-                }
+                    MessageBox.Show("Arquivo pdf não existe", "Aviso", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+                
 
             }
             catch (Exception ex)
             {
-
-
+                MessageBox.Show(ex.Message, "Erro ao gerar impressão", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
             }
-
         }
+
     }
 }
